@@ -1,0 +1,38 @@
+(InteractiveConsole)
+>>> from datetime import time
+>>> from reservas.models import ActividadDeportiva, Horario, Inscripcion
+>>> futbol = ActividadDeportiva.objects.create(nombre="Fútbol", descripcion="Fútbol 5 recreativo", lugar="Cancha principal", cupo=20)
+>>> natacion = ActividadDeportiva.objects.create(nombre="Natación", descripcion="Natación para principiantes", lugar="Pileta universitaria", cupo=15)
+>>> voley = ActividadDeportiva.objects.create(nombre="Vóley", descripcion="Vóley mixto", lugar="Gimnasio", cupo=12)
+>>> h1 = Horario.objects.create(actividad=futbol, dia="Lunes", hora_inicio=time(18, 0), hora_fin=time(19, 30))
+>>> h2 = Horario.objects.create(actividad=futbol, dia="Miércoles", hora_inicio=time(19, 0), hora_fin=time(20, 30))
+>>> i1 = Inscripcion.objects.create(nombre="Juan", apellido="Pérez", dni="40123456", horario=h1)
+>>> i2 = Inscripcion.objects.create(nombre="Vicky", apellido="Coronel", dni="41234567", horario=h1)
+>>> i3 = Inscripcion.objects.create(nombre="Giane", apellido="Díaz", dni="42345678", horario=h2)
+>>> ActividadDeportiva.objects.all()
+<QuerySet [<ActividadDeportiva: Fútbol>, <ActividadDeportiva: Natación>, <ActividadDeportiva: Vóley>]>
+>>> Horario.objects.filter(actividad=futbol)
+<QuerySet [<Horario: Fútbol - Lunes 18:00:00-19:30:00>, <Horario: Fútbol - Miércoles 19:00:00-20:30:00>]>
+>>> futbol.horarios.all()
+<QuerySet [<Horario: Fútbol - Lunes 18:00:00-19:30:00>, <Horario: Fútbol - Miércoles 19:00:00-20:30:00>]>
+>>> Inscripcion.objects.filter(estado="Activa")
+<QuerySet [<Inscripcion: Pérez, Juan (Activa)>, <Inscripcion: Coronel, Vicky (Activa)>, <Inscripcion: Díaz, Giane (Activa)>]>
+>>> Inscripcion.objects.filter(horario=h1)
+<QuerySet [<Inscripcion: Pérez, Juan (Activa)>, <Inscripcion: Coronel, Vicky (Activa)>]>
+>>> h1.inscripciones.all()
+<QuerySet [<Inscripcion: Pérez, Juan (Activa)>, <Inscripcion: Coronel, Vicky (Activa)>]>
+>>> futbol.cupo = 25
+>>> futbol.save()
+>>> ActividadDeportiva.objects.get(nombre="Fútbol").cupo
+25
+>>> i2.estado = "Cancelada"
+>>> 
+>>> i2.save()
+>>> Inscripcion.objects.get(dni="41234567").estado
+'Cancelada'
+>>> 
+>>> i3.delete()
+(1, {'reservas.Inscripcion': 1})
+>>> Inscripcion.objects.all()
+<QuerySet [<Inscripcion: Pérez, Juan (Activa)>, <Inscripcion: Coronel, Vicky (Cancelada)>]>
+>>> 
